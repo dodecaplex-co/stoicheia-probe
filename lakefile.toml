@@ -1,0 +1,19 @@
+# The census of the Stoicheia edition's exported environment effects (d-effects, piece A), and its
+# planted self-test. Built with the Lean v4.35.0 the workflow installs (lake on PATH, no elan).
+name = "stoicheia-effects-census"
+version = "0.1.0"
+defaultTargets = ["census", "Planted"]
+
+[[lean_exe]]
+name = "census"
+root = "Census"
+supportInterpreter = true
+
+# The planted package. Planted (the root) imports Base, which stands in for the foundations,
+# Plain, the forms the books use, and Book, one of each effect in each scope. Planted.Bad.* are the
+# planted failures: the root does not import them. The glob `Planted.*` is Lake's andSubmodules:
+# the root and every module under it (`Planted.+` would leave out the root).
+[[lean_lib]]
+name = "Planted"
+srcDir = "tests/planted"
+globs = ["Planted.*"]

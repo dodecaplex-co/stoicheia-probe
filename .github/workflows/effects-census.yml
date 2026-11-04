@@ -1,0 +1,132 @@
+name: effects-census
+
+# d-effects, piece A: the census of the Stoicheia edition's exported environment effects, at the
+# frozen legacy commit (tag legacy-2026-11-01). It builds the edition, runs the census's planted
+# self-test and its two planted failures and then the census, checks all of them with the
+# acceptance tests, and uploads the JSON as this run's artifact. Every step after the build runs even
+# when an earlier one fails (run 2 skipped the edition's census), so one run shows every refusal and
+# the whole registry gap; the job still fails if any step failed.
+#
+# What it reads and downloads: the edition, through actions/checkout with GitHub's automatic
+# GITHUB_TOKEN, which this file limits to contents: read; the three actions, each pinned by
+# commit; Python 3.11.9, from setup-python's own download; and Lean v4.35.0, one archive from the
+# lean4 release, refused unless its SHA-256 matches. It pushes nothing and uses no secret.
+
+on:
+  push:
+    branches: [effects-census]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: effects-census
+  cancel-in-progress: false
+
+env:
+  EDITION_COMMIT: 391da4e353e0c6e05b25afe5e17f1f2e3916bf64
+  LEAN_URL: https://github.com/leanprover/lean4/releases/download/v4.35.0/lean-4.35.0-linux.tar.zst
+  LEAN_SHA256: 7289597a44543246c9227b8cae501767e095ce17f6d448b95fc4a8dc97268f6d
+
+jobs:
+  census:
+    runs-on: ubuntu-24.04
+    # Measured: the edition's build and certificate take 204 to 213 s on GitHub's runners
+    # (safe-push-tests.yml, 1 to 3 November); the whole job is budgeted at 15 minutes worst case.
+    timeout-minutes: 45
+    steps:
+      - name: Check out the census, its planted self-test and its acceptance tests
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+        with:
+          persist-credentials: false
+
+      - name: Check out the edition at the frozen legacy commit (public; the token is read only)
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5.1.0
+        with:
+          repository: dodecaplex-co/stoicheia
+          ref: 391da4e353e0c6e05b25afe5e17f1f2e3916bf64
+          path: edition
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Refuse any other commit
+        run: |
+          set -euo pipefail
+          got=$(git -C edition rev-parse HEAD)
+          if [ "$got" != "$EDITION_COMMIT" ]; then
+            echo "edition_commit_mismatch: checked out $got, expected $EDITION_COMMIT"
+            exit 1
+          fi
+          mkdir -p out
+          echo "$got" > out/edition-commit.txt
+
+      - name: Python 3.11.9, the factory's pin
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.11.9"
+
+      - name: Install Lean v4.35.0 from its release archive, refused unless its SHA-256 matches
+        run: |
+          set -euo pipefail
+          curl -sSfL --retry 5 --retry-all-errors --connect-timeout 20 --max-time 900 -o "$RUNNER_TEMP/lean.tar.zst" "$LEAN_URL"
+          echo "$LEAN_SHA256  $RUNNER_TEMP/lean.tar.zst" | sha256sum -c -
+          zstd -dc "$RUNNER_TEMP/lean.tar.zst" | tar -xf - -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/lean-4.35.0-linux/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/lean-4.35.0-linux/bin/lean" --version | tee out/lean-version.txt | grep -F "version 4.35.0"
+
+      - name: Build the edition, as its CI does
+        working-directory: edition
+        run: lake build
+
+      - name: Build the census and the planted package (the root and every module under it)
+        run: lake build census Planted
+
+      - name: Self-test on the planted package
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          lake env "$GITHUB_WORKSPACE/.lake/build/bin/census" env --root Planted --foundation Planted.Base \
+            --out out/planted-effects.json
+
+      - name: The census's own failures (an unknown extension, an unknown scoped extension)
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          census="$GITHUB_WORKSPACE/.lake/build/bin/census"
+          for case in unknown:Planted.Bad.Unknown unknown-scoped:Planted.Bad.UnknownScoped; do
+            name=${case%%:*}; root=${case#*:}
+            status=0
+            lake env "$census" env --root "$root" --foundation Planted.Base \
+              --out "out/fail-$name.json" > "out/fail-$name.txt" 2>&1 || status=$?
+            echo "exit $status" >> "out/fail-$name.txt"
+          done
+
+      - name: Census of the edition
+        if: ${{ !cancelled() }}
+        working-directory: edition
+        run: |
+          set -euo pipefail
+          lake env "$GITHUB_WORKSPACE/.lake/build/bin/census" env --root Elements \
+            --foundation Elements.Foundations --foundation Elements.Figure \
+            --edition-commit "$EDITION_COMMIT" --out "$GITHUB_WORKSPACE/out/effects.json"
+
+      - name: Report every registered extension the census neither decodes nor reviews, populated or not
+        if: ${{ !cancelled() }}
+        run: |
+          python3 -I -B tests/test_census.py --host gap --planted out/planted-effects.json \
+            --edition out/effects.json | tee out/registry-gap.txt
+
+      - name: Acceptance tests
+        if: ${{ !cancelled() }}
+        run: |
+          python3 -I -B tests/test_census.py --host github --planted out/planted-effects.json \
+            --edition out/effects.json --edition-dir edition --commit "$EDITION_COMMIT" --out out
+
+      - name: Upload the census
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4  # v5.0.0
+        with:
+          name: effects-census-${{ github.run_id }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 30

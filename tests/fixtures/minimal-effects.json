@@ -1,0 +1,362 @@
+{
+ "schema": "stoicheia.effects-census.exported/1",
+ "claim": "every exported entry of every package module, decoded with every field that changes elaboration, or the census refuses",
+ "not_claimed": [
+  "file-local effects (local attributes and commands, removals, activations, options, section instance variables): piece B"
+ ],
+ "lean_version": "4.35.0",
+ "lean_githash": "fixture",
+ "root": "Elements",
+ "foundations": [
+  "Elements.Foundations",
+  "Elements.Figure"
+ ],
+ "edition_commit": "391da4e353e0c6e05b25afe5e17f1f2e3916bf64",
+ "reviewed": [
+  {
+   "extension": "Lean.declRangeExt",
+   "kind": "map",
+   "reason": "source ranges"
+  }
+ ],
+ "registry": [
+  {
+   "extension": "Lean.Meta.instanceExtension",
+   "scoped": true,
+   "status": "decoded"
+  },
+  {
+   "extension": "Lean.Meta.Grind.grindExt",
+   "scoped": true,
+   "status": "decoded"
+  },
+  {
+   "extension": "Lean.declRangeExt",
+   "scoped": false,
+   "status": "reviewed"
+  },
+  {
+   "extension": "_private.Lean.DocString.Extension.0.Lean.moduleDocExt",
+   "scoped": false,
+   "status": "reviewed"
+  },
+  {
+   "extension": "Lean.Meta.Ext.extExtension",
+   "scoped": true,
+   "status": "neither"
+  }
+ ],
+ "registry_gap": [
+  "Lean.Meta.Ext.extExtension"
+ ],
+ "reviewed_unregistered": [],
+ "modules": [
+  {
+   "name": "Init.Prelude",
+   "part": "toolchain",
+   "entries": 900
+  },
+  {
+   "name": "Elements.Foundations.Words",
+   "part": "foundations",
+   "entries": 40,
+   "extensions": {
+    "Lean.Meta.instanceExtension": 1
+   }
+  },
+  {
+   "name": "Elements.BookI.Prop99",
+   "part": "edition",
+   "entries": 30,
+   "extensions": {
+    "Lean.Meta.instanceExtension": 2,
+    "Lean.Meta.simpExtension": 1,
+    "Lean.classExtension": 1,
+    "Lean.Compiler.implementedByAttr": 1,
+    "Lean.Meta.Grind.grindExt": 1
+   }
+  }
+ ],
+ "effects": [
+  {
+   "family": "instance",
+   "extension": "Lean.Meta.instanceExtension",
+   "module": "Elements.Foundations.Words",
+   "part": "foundations",
+   "outside_foundations": false,
+   "scope": "global",
+   "namespace": null,
+   "target": "Elements.Foundations.instShapeTri",
+   "keyed_on": [
+    "Elements.Foundations.Shape",
+    "Elements.Foundations.Tri"
+   ],
+   "own_keyed": true,
+   "escapes": false,
+   "coercion": false,
+   "detail": "priority 1000, synth order #[], keys 2",
+   "payload": {
+    "keys": [
+     {
+      "key": "const",
+      "name": "Elements.Foundations.Shape",
+      "arity": 1
+     },
+     {
+      "key": "const",
+      "name": "Elements.Foundations.Tri",
+      "arity": 0
+     }
+    ],
+    "val": "Lean.Expr.const `Elements.Foundations.instShapeTri []",
+    "priority": 1000,
+    "global_name": "Elements.Foundations.instShapeTri",
+    "synth_order": [],
+    "attr_kind": "global"
+   }
+  },
+  {
+   "family": "instance",
+   "extension": "Lean.Meta.instanceExtension",
+   "module": "Elements.BookI.Prop99",
+   "part": "edition",
+   "outside_foundations": true,
+   "scope": "global",
+   "namespace": null,
+   "target": "Elements.BookI.Prop99.instSymbolsPt",
+   "keyed_on": [
+    "Elements.Foundations.Symbols",
+    "Elements.BookI.Prop99.Pt"
+   ],
+   "own_keyed": true,
+   "escapes": false,
+   "coercion": false,
+   "detail": "priority 1000, synth order #[], keys 2",
+   "payload": {
+    "keys": [
+     {
+      "key": "const",
+      "name": "Elements.Foundations.Symbols",
+      "arity": 1
+     },
+     {
+      "key": "const",
+      "name": "Elements.BookI.Prop99.Pt",
+      "arity": 0
+     }
+    ],
+    "val": "Lean.Expr.const `Elements.BookI.Prop99.instSymbolsPt []",
+    "priority": 1000,
+    "global_name": "Elements.BookI.Prop99.instSymbolsPt",
+    "synth_order": [],
+    "attr_kind": "global"
+   }
+  },
+  {
+   "family": "instance",
+   "extension": "Lean.Meta.instanceExtension",
+   "module": "Elements.BookI.Prop99",
+   "part": "edition",
+   "outside_foundations": true,
+   "scope": "global",
+   "namespace": null,
+   "target": "Elements.BookI.Prop99.instShapeNat",
+   "keyed_on": [
+    "Elements.Foundations.Shape",
+    "Nat"
+   ],
+   "own_keyed": false,
+   "escapes": true,
+   "coercion": false,
+   "detail": "priority 900, synth order #[], keys 2",
+   "payload": {
+    "keys": [
+     {
+      "key": "const",
+      "name": "Elements.Foundations.Shape",
+      "arity": 1
+     },
+     {
+      "key": "const",
+      "name": "Nat",
+      "arity": 0
+     }
+    ],
+    "val": "Lean.Expr.const `Elements.BookI.Prop99.instShapeNat []",
+    "priority": 900,
+    "global_name": "Elements.BookI.Prop99.instShapeNat",
+    "synth_order": [],
+    "attr_kind": "global"
+   }
+  },
+  {
+   "family": "simp",
+   "extension": "Lean.Meta.simpExtension",
+   "module": "Elements.BookI.Prop99",
+   "part": "edition",
+   "outside_foundations": true,
+   "scope": "global",
+   "namespace": null,
+   "target": "Elements.BookI.Prop99.tagOf_two",
+   "keyed_on": [
+    "Elements.BookI.Prop99.tagOf"
+   ],
+   "own_keyed": true,
+   "escapes": false,
+   "coercion": false,
+   "detail": "simp set simp: theorem, priority 1000, post true, inv false, perm false, rfl false, keys 2",
+   "payload": {
+    "entry": "theorem",
+    "simp_set": "simp",
+    "keys": [
+     {
+      "key": "const",
+      "name": "Elements.BookI.Prop99.tagOf",
+      "arity": 1
+     },
+     {
+      "key": "lit",
+      "nat": 2
+     }
+    ],
+    "level_params": [],
+    "proof": "Lean.Expr.const `Elements.BookI.Prop99.tagOf_two []",
+    "priority": 1000,
+    "post": true,
+    "perm": false,
+    "origin": {
+     "kind": "decl",
+     "decl": "Elements.BookI.Prop99.tagOf_two",
+     "post": true,
+     "inv": false
+    },
+    "rfl": false,
+    "backward_rfl": false
+   }
+  },
+  {
+   "family": "class",
+   "extension": "Lean.classExtension",
+   "module": "Elements.BookI.Prop99",
+   "part": "edition",
+   "outside_foundations": true,
+   "scope": "global",
+   "namespace": null,
+   "target": "Elements.BookI.Prop99.Measure",
+   "keyed_on": [
+    "Elements.BookI.Prop99.Measure"
+   ],
+   "own_keyed": true,
+   "escapes": false,
+   "coercion": false,
+   "detail": "class, out-params #[1]",
+   "payload": {
+    "name": "Elements.BookI.Prop99.Measure",
+    "out_params": [
+     1
+    ],
+    "out_level_params": [
+     1
+    ]
+   }
+  },
+  {
+   "family": "attribute",
+   "extension": "Lean.Compiler.implementedByAttr",
+   "module": "Elements.BookI.Prop99",
+   "part": "edition",
+   "outside_foundations": true,
+   "scope": "global",
+   "namespace": null,
+   "target": "Elements.BookI.Prop99.viaA",
+   "keyed_on": [
+    "Elements.BookI.Prop99.viaA"
+   ],
+   "own_keyed": true,
+   "escapes": false,
+   "coercion": false,
+   "detail": "own-declaration attribute (Lean.Compiler.implementedByAttr)",
+   "payload": {
+    "attribute": "Lean.Compiler.implementedByAttr",
+    "decl": "Elements.BookI.Prop99.viaA",
+    "value": "Elements.BookI.Prop99.implA"
+   }
+  },
+  {
+   "family": "grind",
+   "extension": "Lean.Meta.Grind.grindExt",
+   "module": "Elements.BookI.Prop99",
+   "part": "edition",
+   "outside_foundations": true,
+   "scope": "global",
+   "namespace": null,
+   "target": "Elements.BookI.Prop99.Pt.a.sizeOf_spec",
+   "keyed_on": [
+    "SizeOf.sizeOf",
+    "Elements.BookI.Prop99.Pt.a"
+   ],
+   "own_keyed": true,
+   "escapes": false,
+   "coercion": false,
+   "detail": "grind set grind: ematch Lean.Meta.Grind.EMatchTheoremKind.eqLhs false",
+   "payload": {
+    "entry": "ematch",
+    "grind_set": "grind",
+    "level_params": [],
+    "proof": "Lean.Expr.const `Elements.BookI.Prop99.Pt.a.sizeOf_spec []",
+    "num_params": 0,
+    "patterns": [
+     "Lean.Expr.app ..."
+    ],
+    "symbols": [
+     {
+      "head": "const",
+      "name": "SizeOf.sizeOf"
+     },
+     {
+      "head": "const",
+      "name": "Elements.BookI.Prop99.Pt.a"
+     }
+    ],
+    "origin": {
+     "kind": "decl",
+     "decl": "Elements.BookI.Prop99.Pt.a.sizeOf_spec"
+    },
+    "kind": "Lean.Meta.Grind.EMatchTheoremKind.eqLhs false",
+    "min_indexable": false,
+    "cnstrs": []
+   }
+  }
+ ],
+ "bookkeeping": [
+  {
+   "module": "Elements.BookI.Prop99",
+   "extension": "Lean.declRangeExt",
+   "entries": 9,
+   "reason": "source ranges"
+  }
+ ],
+ "summary": {
+  "modules_walked": 3,
+  "toolchain_modules": 1,
+  "foundations_modules": 1,
+  "edition_modules": 1,
+  "effects": 7,
+  "outside_foundations": 6,
+  "escaping_outside_foundations": 1,
+  "own_keyed_outside_foundations": 5,
+  "scoped_outside_foundations": 0,
+  "outside_by_family_and_scope": {
+   "attribute/global": 1,
+   "class/global": 1,
+   "grind/global": 1,
+   "instance/global": 2,
+   "simp/global": 1
+  },
+  "escaping_by_family": {
+   "instance": 1
+  }
+ },
+ "verdict": "complete",
+ "reasons": []
+}
