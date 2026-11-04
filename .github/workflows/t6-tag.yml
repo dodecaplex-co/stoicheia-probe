@@ -1,0 +1,33 @@
+# d-probes-1 (T-6 and Q1). Runs only when the owner dispatches it on dodecaplex-co/stoicheia-probe.
+# Q1: reads two rulesets with this run's GITHUB_TOKEN and prints what it sees of their bypass fields.
+# T-6: creates refs/tags/rules-v5 at this run's commit with the same token, past tag-create.
+# It uses no action, reads no input, and never prints the token.
+name: d-probes-1 T-6
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    if: github.repository == 'dodecaplex-co/stoicheia-probe'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Q1 reads, then the T-6 tag
+        env:
+          TOKEN: ${{ github.token }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -u
+          umask 077
+          printf 'Authorization: Bearer %s\nAccept: application/vnd.github+json\nX-GitHub-Api-Version: 2022-11-28\n' "$TOKEN" > "$RUNNER_TEMP/h"
+          api() { curl -sS -o "$RUNNER_TEMP/b" -w '%{http_code}' -H @"$RUNNER_TEMP/h" "$@"; }
+          for pair in 'edition-26505760 repos/dodecaplex-co/stoicheia/rulesets/26505760' 'org-26201595 orgs/dodecaplex-co/rulesets/26201595'; do
+            set -- $pair
+            code=$(api "https://api.github.com/$2")
+            seen=$(jq -c '{bypass_actors: (if has("bypass_actors") then .bypass_actors else "absent" end), current_user_can_bypass: (if has("current_user_can_bypass") then .current_user_can_bypass else "absent" end)}' "$RUNNER_TEMP/b" 2>/dev/null || echo '"unreadable"')
+            echo "q1-read name=$1 status=$code seen=$seen"
+          done
+          code=$(api -X POST -H 'Content-Type: application/json' -d "{\"ref\":\"refs/tags/rules-v5\",\"sha\":\"$SHA\"}" "https://api.github.com/repos/dodecaplex-co/stoicheia-probe/git/refs")
+          echo "t6-create status=$code message=$(jq -c '.message // .ref' "$RUNNER_TEMP/b" 2>/dev/null)"
+          rm -f "$RUNNER_TEMP/h" "$RUNNER_TEMP/b"
