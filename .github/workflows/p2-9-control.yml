@@ -1,0 +1,22 @@
+name: d-probes-2 P2-9 control
+
+# d-probes-2, P2-9's control: on stoicheia-probe's branch probe2/attest only, under the probe's allow-list for the run
+# (edition-actions plus actions/attest@1e69f48a). It uses one listed action, so it must run.
+on:
+  push:
+    branches: [probe2/attest]
+
+permissions:
+  contents: read
+
+jobs:
+  listed:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: echo 'p2-9 listed' > "$RUNNER_TEMP/p2-9.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2, on edition-actions
+        with:
+          name: p2-9-control
+          path: ${{ runner.temp }}/p2-9.txt
+          retention-days: 1

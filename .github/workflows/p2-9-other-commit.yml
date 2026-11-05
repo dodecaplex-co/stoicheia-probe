@@ -1,0 +1,20 @@
+name: d-probes-2 P2-9 other commit
+
+# d-probes-2, P2-9: actions/attest at another commit (v4.2.1, 508db95d, the one d-probes-0 run 1 used). The list
+# pins 1e69f48a alone, so GitHub must refuse this one. If it ran anyway, it could not sign: no id-token permission.
+on:
+  push:
+    branches: [probe2/attest]
+
+permissions:
+  contents: read
+
+jobs:
+  other-commit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: echo 'p2-9' > "$RUNNER_TEMP/p2-9.txt"
+      - uses: actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d # v4.2.1, not the listed commit
+        with:
+          subject-path: ${{ runner.temp }}/p2-9.txt
